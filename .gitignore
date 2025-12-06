@@ -1,3 +1,5 @@
+# NusaKas Project - Enhanced .gitignore
+
 # Logs
 logs
 *.log
@@ -6,19 +8,184 @@ yarn-debug.log*
 yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
+error.log
+access.log
 
-node_modules
-dist
-dist-ssr
+# Dependencies
+node_modules/
+*/node_modules/
+npm-shrinkwrap.json
+yarn.lock
+package-lock.json
+
+# Build outputs
+dist/
+dist-ssr/
+build/
+*/build/
 *.local
+*.tgz
+
+# Environment variables (CRITICAL - Contains sensitive keys)
+.env
+.env.local
+.env.production
+.env.staging
+.env.development
+.env.test
+*/.env
+*/.env.local
+*/.env.production
+frontend/.env
+backend/.env
+
+# WhatsApp Bot specific files
+baileys-session/
+baileys-auth-info/
+.wa-sessions/
+whatsapp-sessions/
+wa_credentials/
+wa_session_*
+
+# Baileys temporary files
+*.baileys-session
+*.auth_info.json
+*.auth_info_multi_device.json
+baileys_temp/
+temp_wa_*
+
+# Supabase
+.supabase/
+supabase_temp/
+
+# Database files
+*.db
+*.sqlite
+*.sqlite3
+database.db
+
+# AI Service temporary files
+gemini-temp/
+ai-cache/
+temp-images/
+temp-receipts/
+temp-uploads/
+
+# PDF generation temp files
+pdf-temp/
+temp-pdfs/
+report-cache/
 
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json
-.idea
+.idea/
 .DS_Store
 *.suo
 *.ntvs*
 *.njsproj
 *.sln
 *.sw?
+*.sublime-*
+
+# Operating System files
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+
+# Runtime files
+*.pid
+*.seed
+*.pid.lock
+*.tgz
+*.tar.gz
+
+# Coverage directory used by tools like istanbul
+coverage/
+*.lcov
+.nyc_output
+
+# Dependency directories
+jspm_packages/
+
+# Optional npm cache directory
+.npm
+
+# Optional eslint cache
+.eslintcache
+
+# Output of 'npm pack'
+*.tgz
+
+# Yarn Integrity file
+.yarn-integrity
+
+# parcel-bundler cache (https://parceljs.org/)
+.cache
+.parcel-cache
+
+# Next.js build output
+.next
+
+# Nuxt.js build / generate output
+.nuxt
+dist
+
+# Storybook build outputs
+.out
+.storybook-out
+
+# Temporary folders
+tmp/
+temp/
+.tmp/
+
+# Testing
+coverage/
+.nyc_output/
+test-results/
+playwright-report/
+
+# Development tools
+.prettier/
+.eslintcache
+.stylelintcache
+
+# Application specific
+uploads/
+screenshots/
+session-data/
+user-sessions/
+auth-tokens/
+jwt-secrets/
+
+# Backup files
+*.bak
+*.backup
+*.old
+*.orig
+
+# Documentation builds
+docs/build/
+*.pdf
+*.html
+
+# Machine Learning models (if any)
+models/
+*.model
+*.bin
+data-models/
+
+# Docker
+.dockerignore
+Dockerfile
+docker-compose.override.yml
+
+# Package managers
+.pnpm-store/
+.yarn/cache/
+.yarn/unplugged/
+.yarn/build-state.yml
+.yarn/install-state.gz
+.pnp.*
