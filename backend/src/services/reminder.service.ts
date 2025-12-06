@@ -77,7 +77,24 @@ export class ReminderService {
 
     if (error) {
       console.error('[Reminder] Query error:', error.message);
-      return [];
+      // Fallback to raw query if JSONB contains fails
+      try {
+        const { data: rawData, error: rawError } = await supabase
+          .rpc('get_users_for_reminder', {
+            p_time: time,
+            p_day: day
+          });
+        
+        if (rawError) {
+          console.error('[Reminder] RPC query error:', rawError.message);
+          return [];
+        }
+        
+        return (rawData || []) as User[];
+      } catch (fallbackError) {
+        console.error('[Reminder] Fallback query error:', fallbackError);
+        return [];
+      }
     }
 
     return (data || []) as User[];

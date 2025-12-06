@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
-import { Menu, Bell, User, X, Leaf } from 'lucide-react';
+import { useAuth } from '../context/AuthContext';
+import { Menu, Bell, User, X, Leaf, LogOut } from 'lucide-react';
 
 export const Navbar: React.FC = () => {
+  const { user, logout } = useAuth();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   return (
-    // Solid background (bg-white) for stability and reduced visual noise
     <nav className="sticky top-0 z-50 w-full border-b border-gray-200 bg-white">
       <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
         
@@ -21,11 +22,13 @@ export const Navbar: React.FC = () => {
 
         {/* Desktop Navigation */}
         <div className="hidden md:flex md:items-center md:gap-8">
-          {['Dashboard', 'Transaksi', 'Laporan', 'Pengaturan'].map((item) => (
+          {['Dashboard', 'Transaksi', 'Laporan', 'Pengaturan'].map((item, idx) => (
             <a
               key={item}
               href="#"
-              className="text-sm font-medium text-gray-500 transition-colors hover:text-emerald-700"
+              className={`text-sm font-medium transition-colors ${
+                idx === 0 ? 'text-emerald-700' : 'text-gray-500 hover:text-emerald-700'
+              }`}
             >
               {item}
             </a>
@@ -44,9 +47,17 @@ export const Navbar: React.FC = () => {
               <div className="flex h-7 w-7 items-center justify-center rounded-full bg-emerald-100 text-emerald-700">
                 <User className="h-4 w-4" />
               </div>
-              <span className="text-sm font-semibold text-gray-700">Juragan Budi</span>
+              <span className="text-sm font-semibold text-gray-700">{user?.full_name || 'Juragan'}</span>
             </button>
           </div>
+
+          <button
+            onClick={logout}
+            className="hidden md:flex items-center gap-1 px-3 py-2 rounded-lg text-sm font-medium text-gray-500 hover:text-red-600 hover:bg-red-50 transition-colors"
+            title="Keluar"
+          >
+            <LogOut className="h-4 w-4" />
+          </button>
 
           {/* Mobile Menu Button */}
           <button 
@@ -61,7 +72,7 @@ export const Navbar: React.FC = () => {
       {/* Mobile Menu Dropdown */}
       {isMobileMenuOpen && (
         <div className="md:hidden border-t border-gray-100 bg-white px-4 py-4 space-y-2 shadow-lg">
-           {['Dashboard', 'Transaksi', 'Laporan', 'Pengaturan'].map((item) => (
+          {['Dashboard', 'Transaksi', 'Laporan', 'Pengaturan'].map((item) => (
             <a
               key={item}
               href="#"
@@ -70,6 +81,13 @@ export const Navbar: React.FC = () => {
               {item}
             </a>
           ))}
+          <button
+            onClick={logout}
+            className="w-full flex items-center gap-2 rounded-md px-3 py-2 text-base font-medium text-red-600 hover:bg-red-50"
+          >
+            <LogOut className="h-4 w-4" />
+            Keluar
+          </button>
         </div>
       )}
     </nav>

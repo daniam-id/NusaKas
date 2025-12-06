@@ -189,3 +189,9 @@ docker-compose.override.yml
 .yarn/build-state.yml
 .yarn/install-state.gz
 .pnp.*
+
+# Development tools and metadata
+.claude/
+.github/
+.spec-workflow/
+.archive/

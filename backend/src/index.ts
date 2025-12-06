@@ -22,9 +22,9 @@ const app: Express = express();
 
 // Middleware
 app.use(cors({
-  origin: process.env.NODE_ENV === 'production' 
-    ? ['https://nusakas.app'] 
-    : ['http://localhost:5173', 'http://localhost:3000'],
+  origin: process.env.NODE_ENV === 'production'
+    ? ['https://nusakas.app']
+    : ['http://localhost:3001', 'http://localhost:3000'],
   credentials: true,
 }));
 app.use(express.json({ limit: '10mb' }));
@@ -38,6 +38,32 @@ app.get('/health', (_req: Request, res: Response) => {
     timestamp: new Date().toISOString(),
     version: '1.0.0',
   });
+});
+
+// Detailed health check for monitoring
+app.get('/health/detailed', (_req: Request, res: Response) => {
+  const waConnected = whatsappService.isConnected();
+  const reminderRunning = reminderService.isRunning();
+  const uptime = process.uptime();
+  const memoryUsage = process.memoryUsage();
+
+  const health = {
+    status: waConnected ? 'healthy' : 'degraded',
+    timestamp: new Date().toISOString(),
+    version: '1.0.0',
+    uptime: `${Math.floor(uptime / 60)}m ${Math.floor(uptime % 60)}s`,
+    services: {
+      whatsapp: waConnected ? 'connected' : 'disconnected',
+      reminder: reminderRunning ? 'running' : 'stopped',
+    },
+    memory: {
+      heapUsed: `${Math.round(memoryUsage.heapUsed / 1024 / 1024)}MB`,
+      heapTotal: `${Math.round(memoryUsage.heapTotal / 1024 / 1024)}MB`,
+      rss: `${Math.round(memoryUsage.rss / 1024 / 1024)}MB`,
+    },
+  };
+
+  res.status(waConnected ? 200 : 503).json(health);
 });
 
 // API Routes placeholder

@@ -4,8 +4,8 @@ import { fileURLToPath } from 'url';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
-// Load environment variables from root .env.local
-config({ path: join(__dirname, '..', '..', '..', '.env.local') });
+// Load environment variables from root .env file
+config({ path: join(__dirname, '..', '..', '..', '.env') });
 
 export const env = {
   PORT: parseInt(process.env.PORT || '3000', 10),

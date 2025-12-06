@@ -8,6 +8,9 @@ export interface User {
   bot_style?: BotStyle;
   use_emoji?: boolean;
   onboarding_complete?: boolean;
+  pin_hash?: string | null;
+  store_name?: string | null;
+  owner_name?: string | null;
 }
 
 export type BotStyle = 'formal' | 'santai' | 'semi-formal';

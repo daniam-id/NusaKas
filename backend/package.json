@@ -6,6 +6,7 @@
   "main": "dist/index.js",
   "scripts": {
     "dev": "tsx watch --ignore .wa-session src/index.ts",
+    "dev:from-root": "npm run dev",
     "dev:pair": "tsx src/index.ts",
     "build": "tsc",
     "start": "node dist/index.js",
@@ -16,6 +17,7 @@
     "@google/generative-ai": "^0.24.1",
     "@supabase/supabase-js": "^2.86.2",
     "@whiskeysockets/baileys": "^6.7.17",
+    "bcrypt": "^6.0.0",
     "cors": "^2.8.5",
     "dotenv": "^17.2.3",
     "express": "^5.1.0",
@@ -27,6 +29,7 @@
     "zod": "^3.25.57"
   },
   "devDependencies": {
+    "@types/bcrypt": "^6.0.0",
     "@types/cors": "^2.8.19",
     "@types/express": "^5.0.3",
     "@types/jsonwebtoken": "^9.0.10",

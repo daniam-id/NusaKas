@@ -1,24 +1,29 @@
 import React from 'react';
-import { Wallet, TrendingUp, TrendingDown, Activity, ArrowUpRight, ArrowDownRight } from 'lucide-react';
-import { StatMetric } from '../types';
+import { Wallet, TrendingUp, TrendingDown, ArrowUpRight, ArrowDownRight, LucideIcon } from 'lucide-react';
+
+interface StatMetric {
+  label: string;
+  value: string;
+  change?: string;
+  trend?: 'up' | 'down';
+  iconName: 'Wallet' | 'TrendingUp' | 'TrendingDown';
+}
 
 interface StatsCardProps {
   stat: StatMetric;
 }
 
-const iconMap = {
-  Wallet: Wallet,
-  TrendingUp: TrendingUp,
-  TrendingDown: TrendingDown,
-  Activity: Activity,
+const iconMap: Record<string, LucideIcon> = {
+  Wallet,
+  TrendingUp,
+  TrendingDown,
 };
 
 export const StatsCard: React.FC<StatsCardProps> = ({ stat }) => {
-  const Icon = iconMap[stat.iconName];
+  const Icon = iconMap[stat.iconName] || Wallet;
   const isPositive = stat.trend === 'up';
 
   return (
-    // Card Surface: #FFFFFF (Pure White) on top of the grey page background
     <div className="group relative overflow-hidden rounded-xl border border-gray-200 bg-white p-6 shadow-sm transition-all duration-200 hover:border-emerald-200 hover:shadow-md">
       
       <div className="flex items-start justify-between">
@@ -37,13 +42,15 @@ export const StatsCard: React.FC<StatsCardProps> = ({ stat }) => {
         </div>
       </div>
 
-      <div className="mt-4 flex items-center gap-2">
-        <span className={`flex items-center gap-0.5 text-sm font-semibold ${isPositive ? 'text-emerald-700' : 'text-red-700'}`}>
-          {isPositive ? <ArrowUpRight className="h-4 w-4" /> : <ArrowDownRight className="h-4 w-4" />}
-          {stat.change}
-        </span>
-        <span className="text-sm text-gray-400">vs bulan lalu</span>
-      </div>
+      {stat.change && (
+        <div className="mt-4 flex items-center gap-2">
+          <span className={`flex items-center gap-0.5 text-sm font-semibold ${isPositive ? 'text-emerald-700' : 'text-red-700'}`}>
+            {isPositive ? <ArrowUpRight className="h-4 w-4" /> : <ArrowDownRight className="h-4 w-4" />}
+            {stat.change}
+          </span>
+          <span className="text-sm text-gray-400">vs bulan lalu</span>
+        </div>
+      )}
     </div>
   );
 };
