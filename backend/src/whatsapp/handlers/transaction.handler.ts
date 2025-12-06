@@ -1,4 +1,4 @@
-import { WASocket, proto, downloadMediaMessage } from '@whiskeysockets/baileys';
+import { WASocket, proto, downloadMediaMessage } from 'baileys';
 import { transactionService } from '../../services/transaction.service.js';
 import { aiService, TransactionExtraction } from '../../services/ai.service.js';
 import { getSupabase } from '../../config/supabase.js';

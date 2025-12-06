@@ -5,7 +5,7 @@
 -- 1. Extend users table with personalization columns
 ALTER TABLE public.users 
   ADD COLUMN IF NOT EXISTS reminder_time TIME DEFAULT '21:00:00',
-  ADD COLUMN IF NOT EXISTS operational_days JSONB DEFAULT '["monday","tuesday","wednesday","thursday","friday","saturday"]',
+  ADD COLUMN IF NOT EXISTS operational_days JSONB DEFAULT '["monday","tuesday","wednesday","thursday","friday","saturday"]'::jsonb,
   ADD COLUMN IF NOT EXISTS bot_style TEXT DEFAULT 'santai',
   ADD COLUMN IF NOT EXISTS use_emoji BOOLEAN DEFAULT true,
   ADD COLUMN IF NOT EXISTS onboarding_complete BOOLEAN DEFAULT false;

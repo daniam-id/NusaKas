@@ -68,33 +68,16 @@ export class ReminderService {
   private async getUsersForReminder(time: string, day: string): Promise<User[]> {
     const supabase = getSupabase();
 
+    // Use RPC function since we know direct SQL works
     const { data, error } = await supabase
-      .from('users')
-      .select('*')
-      .eq('reminder_time', time)
-      .eq('onboarding_complete', true)
-      .contains('operational_days', [day]);
+      .rpc('get_users_for_reminder', {
+        p_time: time,
+        p_day: day
+      });
 
     if (error) {
-      console.error('[Reminder] Query error:', error.message);
-      // Fallback to raw query if JSONB contains fails
-      try {
-        const { data: rawData, error: rawError } = await supabase
-          .rpc('get_users_for_reminder', {
-            p_time: time,
-            p_day: day
-          });
-        
-        if (rawError) {
-          console.error('[Reminder] RPC query error:', rawError.message);
-          return [];
-        }
-        
-        return (rawData || []) as User[];
-      } catch (fallbackError) {
-        console.error('[Reminder] Fallback query error:', fallbackError);
-        return [];
-      }
+      console.error('[Reminder] RPC query error:', error.message);
+      return [];
     }
 
     return (data || []) as User[];

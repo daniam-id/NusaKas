@@ -20,13 +20,62 @@ validateEnv();
 
 const app: Express = express();
 
-// Middleware
-app.use(cors({
-  origin: process.env.NODE_ENV === 'production'
-    ? ['https://nusakas.app']
-    : ['http://localhost:3001', 'http://localhost:3000'],
+// CORS Configuration
+const corsOptions = {
+  origin: function (origin: string | undefined, callback: (err: Error | null, allow?: boolean) => void) {
+    // Allow requests with no origin (like mobile apps or curl requests)
+    if (!origin) return callback(null, true);
+    
+    const allowedOrigins = [
+      'https://nusakas.app',
+      'https://meant-serves-voting-catalog.trycloudflare.com',
+      'https://contributing-hewlett-secondary-fixed.trycloudflare.com',
+      'http://localhost:3001',
+      'http://localhost:3000'
+    ];
+    
+    if (allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
   credentials: true,
-}));
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
+  exposedHeaders: ['Content-Type', 'Authorization']
+};
+
+// Manual CORS middleware for all routes
+app.use((req: Request, res: Response, next) => {
+  const origin = req.headers.origin;
+  const allowedOrigins = [
+    'https://nusakas.app',
+    'https://meant-serves-voting-catalog.trycloudflare.com',
+    'https://contributing-hewlett-secondary-fixed.trycloudflare.com',
+    'http://localhost:3001',
+    'http://localhost:3000'
+  ];
+
+  if (origin && allowedOrigins.includes(origin)) {
+    res.setHeader('Access-Control-Allow-Origin', origin);
+    res.setHeader('Access-Control-Allow-Credentials', 'true');
+    res.setHeader('Access-Control-Allow-Methods', 'GET,POST,PUT,DELETE,OPTIONS');
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type,Authorization,X-Requested-With');
+    res.setHeader('Vary', 'Origin');
+  }
+
+  // Handle preflight requests
+  if (req.method === 'OPTIONS') {
+    res.sendStatus(204);
+    return;
+  }
+  
+  next();
+});
+
+// Middleware
+app.use(cors(corsOptions));
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true }));
 app.use(requestLogger);

@@ -1,4 +1,4 @@
-import { WASocket } from '@whiskeysockets/baileys';
+import { WASocket } from 'baileys';
 import { userHandler, getOnboardingState, setOnboardingState, type UserRecord } from './user.handler.js';
 import { registrationService } from '../../services/registration.service.js';
 import { formatReplyService } from '../../services/format-reply.service.js';

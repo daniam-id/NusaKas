@@ -33,11 +33,21 @@ build/
 .env.staging
 .env.development
 .env.test
+.env.example
 */.env
 */.env.local
 */.env.production
 frontend/.env
 backend/.env
+.env.*
+!.env.example
+
+# Local configuration files
+config/local.json
+config/local.js
+config/local.ts
+settings/local.json
+settings/local.js
 
 # WhatsApp Bot specific files
 baileys-session/
@@ -47,12 +57,24 @@ whatsapp-sessions/
 wa_credentials/
 wa_session_*
 
-# Baileys temporary files
-*.baileys-session
+# Baileys session files (CRITICAL - Contains sensitive credentials)
+.wa-session/
+.wa-session/
+*/.wa-session/
 *.auth_info.json
 *.auth_info_multi_device.json
+*.creds.json
+*.me.json
+*.noise-key-*
+*.pre-key-*
+*.session-*
+
+# Baileys temporary files
+*.baileys-session
 baileys_temp/
 temp_wa_*
+session-backup/
+session-logs/
 
 # Supabase
 .supabase/
@@ -195,3 +217,11 @@ docker-compose.override.yml
 .github/
 .spec-workflow/
 .archive/
+
+# Development/Debug scripts (Optional - Remove if needed)
+scripts/*.sh
+scripts/fix_515_error.sh
+scripts/environment_optimizer.sh
+scripts/comprehensive_515_test.sh
+monitor_515_fix.sh
+run_515_fix.sh

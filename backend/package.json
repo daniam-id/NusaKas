@@ -15,8 +15,10 @@
   },
   "dependencies": {
     "@google/generative-ai": "^0.24.1",
+    "@hapi/boom": "^10.0.1",
     "@supabase/supabase-js": "^2.86.2",
-    "@whiskeysockets/baileys": "^6.7.17",
+    "@whiskeysockets/baileys": "^6.6.0",
+    "baileys": "^7.0.0-rc.9",
     "bcrypt": "^6.0.0",
     "cors": "^2.8.5",
     "dotenv": "^17.2.3",

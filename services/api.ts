@@ -1,15 +1,32 @@
 import axios, { AxiosError, InternalAxiosRequestConfig } from 'axios';
 
-let API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000/api';
-console.log('[DEBUG] API_BASE_URL (initial):', API_BASE_URL);
-console.log('[DEBUG] import.meta.env:', import.meta.env);
+// Production API Configuration
+const CLOUDFLARE_API_URL = 'https://meant-serves-voting-catalog.trycloudflare.com/api';
 
-// Override to ensure correct backend URL
-if (API_BASE_URL.includes('3001')) {
-    console.log('[DEBUG] 🚨 Detected wrong port 3001, fixing to 3000');
-    API_BASE_URL = 'http://localhost:3000/api';
-}
-console.log('[DEBUG] API_BASE_URL (final):', API_BASE_URL);
+// Fixed API endpoint selection - Cloudflare only
+const getApiBaseUrl = () => {
+    console.log('[DEBUG] 🌐 Using Cloudflare API endpoint exclusively');
+    console.log('[DEBUG] API_BASE_URL:', CLOUDFLARE_API_URL);
+    return CLOUDFLARE_API_URL;
+};
+
+const API_BASE_URL = getApiBaseUrl();
+
+// Export endpoint configuration for external use
+export const API_ENDPOINTS = {
+    PRODUCTION: CLOUDFLARE_API_URL,
+    CURRENT: API_BASE_URL
+} as const;
+
+/**
+ * Production API Configuration
+ * 
+ * Using Cloudflare production endpoint exclusively:
+ * - PRODUCTION: https://meant-serves-voting-catalog.trycloudflare.com/api
+ * 
+ * This configuration is fixed for production deployment.
+ * No local development endpoint available.
+ */
 
 export const api = axios.create({
   baseURL: API_BASE_URL,

@@ -1,4 +1,4 @@
-import { WASocket, proto } from '@whiskeysockets/baileys';
+import { WASocket, proto } from 'baileys';
 import { userHandler, getOnboardingState } from './user.handler.js';
 import { transactionHandler } from './transaction.handler.js';
 import { commandHandler } from './command.handler.js';

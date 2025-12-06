@@ -1,4 +1,4 @@
-import { WASocket } from '@whiskeysockets/baileys';
+import { WASocket } from 'baileys';
 import { getSupabase } from '../../config/supabase.js';
 import type { BotStyle } from '../../types/index.js';
 
@@ -53,12 +53,14 @@ class UserHandler {
       return existingUser as UserRecord;
     }
 
-    // Auto-register new user
+    // Auto-register new user (with ALL required fields)
     const { data: newUser, error } = await supabase
       .from('users')
       .insert({
         wa_number: normalized,
         full_name: 'Juragan',
+        email: `${normalized}@whatsapp.com`, // Default email for WhatsApp users
+        store_name: 'Toko Saya', // Default store name
         onboarding_complete: false,
       })
       .select('id, wa_number, full_name, store_name, bot_style, use_emoji, onboarding_complete')

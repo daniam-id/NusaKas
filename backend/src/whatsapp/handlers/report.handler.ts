@@ -1,4 +1,4 @@
-import { WASocket } from '@whiskeysockets/baileys';
+import { WASocket } from 'baileys';
 import { transactionService } from '../../services/transaction.service.js';
 import { reportService } from '../../services/report.service.js';
 

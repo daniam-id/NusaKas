@@ -4,8 +4,8 @@ import react from '@vitejs/plugin-react';
 
 export default defineConfig(({ mode }) => {
     const env = loadEnv(mode, '.', '');
-    console.log('[VITE] Loaded environment variables:');
-    console.log('[VITE] VITE_API_URL from env:', env.VITE_API_URL);
+    console.log('[VITE] Production configuration loaded');
+    console.log('[VITE] Using Cloudflare API endpoint exclusively');
     console.log('[VITE] All VITE_ vars:', Object.keys(env).filter(key => key.startsWith('VITE_')));
     
     return {
@@ -24,8 +24,8 @@ export default defineConfig(({ mode }) => {
       define: {
         'process.env.API_KEY': JSON.stringify(env.GEMINI_API_KEY),
         'process.env.GEMINI_API_KEY': JSON.stringify(env.GEMINI_API_KEY),
-        'import.meta.env.VITE_API_URL': JSON.stringify(env.VITE_API_URL || 'http://localhost:3000/api'),
-        'process.env.VITE_API_URL': JSON.stringify(env.VITE_API_URL || 'http://localhost:3000/api')
+        'import.meta.env.VITE_USE_CLOUDFLARE_API': JSON.stringify(env.VITE_USE_CLOUDFLARE_API || 'true'),
+        'process.env.VITE_USE_CLOUDFLARE_API': JSON.stringify(env.VITE_USE_CLOUDFLARE_API || 'true')
       },
       resolve: {
         alias: {
