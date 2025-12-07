@@ -165,27 +165,27 @@ Bot: "✅ Laporan custom periode generated
 
 ## 📸 Screenshot Aplikasi
 
-**Lihat NusaKas dalam aksi:**
+
 
 ![WhatsApp Chat](screenshots/WhatsApp%20Image%202025-12-07%20at%2023.17.13.jpeg)
 
-*Contoh interaksi dengan WhatsApp bot untuk pencatatan transaksi*
+
 
 ![Dashboard](screenshots/WhatsApp%20Image%202025-12-07%20at%2023.23.46.jpeg)
 
-*Tampilan dashboard dengan grafik dan statistik real-time*
+
 
 ![AI Analysis](screenshots/WhatsApp%20Image%202025-12-07%20at%2023.23.53.jpeg)
 
-*Contoh analisis struk belanja dengan AI untuk ekstraksi data otomatis*
+
 
 ![Registration](screenshots/WhatsApp%20Image%202025-12-07%20at%2023.24.25(1).jpeg)
 
-*Step-by-step registrasi multi-platform (Web & WhatsApp)*
+
 
 ![Transaction History](screenshots/WhatsApp%20Image%202025-12-07%20at%2023.24.44.jpeg)
 
-*View riwayat transaksi dan analisis data*
+
 
 ---
 
