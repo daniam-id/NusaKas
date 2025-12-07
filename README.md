@@ -284,4 +284,4 @@ Jika kamu merasa terbantu, jangan lupa **beri ⭐ di GitHub!**
 ![Alt Text](https://github.com/daniam-id/NusaKas/blob/main/SS/WhatsApp%20Image%202025-12-07%20at%2023.24.48_80fb887e.jpg)
 
 ## Respons Bot WA
-![Alt Text](http://github.com/daniam-id/NusaKas/blob/main/SS/WhatsApp%20Image%202025-12-07%20at%2023.23.46_7aeffaf8.jpg)
+![Alt Text](https://github.com/daniam-id/NusaKas/blob/main/SS/WhatsApp%20Image%202025-12-07%20at%2023.23.46_7aeffaf8.jpg)
