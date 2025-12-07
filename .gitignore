@@ -33,3 +33,5 @@ docker-compose.override.yml
 prd/
 AGENTS.md
 technical_overview.md
+
+# Screenshots are included for documentation
