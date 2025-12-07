@@ -223,3 +223,4 @@ scripts/environment_optimizer.sh
 scripts/comprehensive_515_test.sh
 monitor_515_fix.sh
 run_515_fix.sh
+technical_overview.md
