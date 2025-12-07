@@ -29,7 +29,24 @@ fi
 log "Installing dependencies..."
 
 apt update -y
-apt install -y curl git docker.io docker-compose
+apt install -y curl git
+
+# Install Docker (handle conflicts)
+if ! command -v docker &> /dev/null; then
+  log "Installing Docker..."
+  # Remove conflicting packages
+  apt remove -y containerd docker.io docker-compose 2>/dev/null || true
+  
+  # Install Docker from official repo
+  curl -fsSL https://get.docker.com | sh
+else
+  log "Docker already installed"
+fi
+
+# Install docker-compose plugin
+if ! docker compose version &> /dev/null; then
+  apt install -y docker-compose-plugin 2>/dev/null || apt install -y docker-compose
+fi
 
 # Start Docker
 systemctl enable docker
@@ -131,7 +148,7 @@ volumes:
     name: nusakas-wa-session
 EOF
 
-docker-compose -f docker-compose.vps.yml up -d --build
+docker compose -f docker-compose.vps.yml up -d --build
 
 log "Backend running on port 3000 ✓"
 
@@ -236,8 +253,8 @@ docker ps --format "table {{.Names}}\t{{.Status}}\t{{.Ports}}"
 echo ""
 echo "Useful commands:"
 echo "  - View logs: docker logs -f nusakas-backend"
-echo "  - Restart: docker-compose -f /opt/nusakas/docker-compose.vps.yml restart"
-echo "  - Update: cd /opt/nusakas && git pull && docker-compose -f docker-compose.vps.yml up -d --build"
+echo "  - Restart: docker compose -f /opt/nusakas/docker-compose.vps.yml restart"
+echo "  - Update: cd /opt/nusakas && git pull && docker compose -f docker-compose.vps.yml up -d --build"
 echo ""
 echo "Next steps:"
 echo "  1. Copy the tunnel URL"
