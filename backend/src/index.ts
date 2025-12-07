@@ -11,6 +11,7 @@ import registerRoutes from './routes/register.routes.js';
 import settingsRoutes from './routes/settings.routes.js';
 import { whatsappService } from './whatsapp/index.js';
 import { reminderService } from './services/reminder.service.js';
+import { waSessionCleanupService } from './services/wa-session-cleanup.service.js';
 
 // Initialize global WhatsApp socket (will be set by WhatsApp bot module)
 global.waSock = null;
@@ -160,6 +161,9 @@ const server = app.listen(env.PORT, async () => {
 
     // Start reminder scheduler
     reminderService.startScheduler();
+    
+    // Start WA session cleanup scheduler
+    waSessionCleanupService.start();
   } catch (error) {
     console.error('[WA] Failed to start WhatsApp bot:', error);
   }
