@@ -199,9 +199,7 @@ models/
 *.bin
 data-models/
 
-# Docker
-.dockerignore
-Dockerfile
+# Docker (only override files)
 docker-compose.override.yml
 
 # Package managers
