@@ -51,17 +51,22 @@ app.use((req: Request, res: Response, next) => {
     ? ['https://nusakas.netlify.app']
     : ['https://nusakas.netlify.app', 'http://localhost:3001', 'http://localhost:3000'];
 
+  // Always set CORS headers for allowed origins
   if (origin && allowedOrigins.includes(origin)) {
     res.setHeader('Access-Control-Allow-Origin', origin);
     res.setHeader('Access-Control-Allow-Credentials', 'true');
     res.setHeader('Access-Control-Allow-Methods', 'GET,POST,PUT,DELETE,OPTIONS');
     res.setHeader('Access-Control-Allow-Headers', 'Content-Type,Authorization,X-Requested-With');
     res.setHeader('Vary', 'Origin');
-  }
-
-  // Handle preflight requests
-  if (req.method === 'OPTIONS') {
-    res.sendStatus(204);
+    
+    // Handle preflight requests
+    if (req.method === 'OPTIONS') {
+      res.sendStatus(204);
+      return;
+    }
+  } else if (req.method === 'OPTIONS') {
+    // Reject preflight for non-allowed origins
+    res.sendStatus(403);
     return;
   }
   
