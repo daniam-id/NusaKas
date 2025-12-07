@@ -378,22 +378,16 @@ Pastikan `VITE_USE_LOCAL_API=true` di file `.env`
 
 - **daniam-id** — Fullstack Developer
   
+- **daniam-id** — Fullstack Developer & Founder NusaKas
+  
   [GitHub](https://github.com/daniam-id)
+
+- **NadifFijri28** — Co-Founder NusaKas
+  
+  [GitHub](https://github.com/NadifFijri28)
 
 ---
 
-<<<<<<< HEAD
 ## 📄 Lisensi
 
 MIT License — Silakan gunakan dan modifikasi sesuai kebutuhan.
-=======
-# Dokumentasi Foto
-## Tampilan Web Login
-![Alt Text](https://github.com/daniam-id/NusaKas/blob/main/SS/WhatsApp%20Image%202025-12-07%20at%2023.17.17_6e1dc31f.jpg)
-![Alt Text](https://github.com/daniam-id/NusaKas/blob/main/SS/WhatsApp%20Image%202025-12-07%20at%2023.23.57_636cbaa1.jpg)
-![Alt Text](https://github.com/daniam-id/NusaKas/blob/main/SS/WhatsApp%20Image%202025-12-07%20at%2023.24.29_a66752d4.jpg)
-![Alt Text](https://github.com/daniam-id/NusaKas/blob/main/SS/WhatsApp%20Image%202025-12-07%20at%2023.24.48_80fb887e.jpg)
-
-## Respons Bot WA
-![Alt Text](https://github.com/daniam-id/NusaKas/blob/main/SS/WhatsApp%20Image%202025-12-07%20at%2023.23.46_7aeffaf8.jpg)
->>>>>>> origin/main
