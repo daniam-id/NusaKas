@@ -204,7 +204,7 @@ Edit file `.env`:
 ```env
 # Supabase (Frontend)
 VITE_SUPABASE_URL=https://your-project.supabase.co
-VITE_SUPABASE_ANON_KEY=your_anon_key
+VITE_SUPABASE_ANON_KEY=your_anon_key_here
 
 # API Configuration
 VITE_USE_LOCAL_API=true
@@ -223,10 +223,10 @@ PORT=3000
 
 # Supabase
 SUPABASE_URL=https://your-project.supabase.co
-SUPABASE_SERVICE_KEY=your_service_role_key
+SUPABASE_SERVICE_KEY=your_service_role_key_here
 
 # Google Gemini AI
-GEMINI_API_KEY=your_gemini_api_key
+GEMINI_API_KEY=your_gemini_api_key_here
 
 # JWT (generate random string min 32 karakter)
 JWT_SECRET=your_jwt_secret_key_minimum_32_characters
