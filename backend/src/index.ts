@@ -30,7 +30,7 @@ const corsOptions = {
     // Production origins only - localhost handled via env check
     const allowedOrigins = env.NODE_ENV === 'production' 
       ? ['https://nusakas.app', 'https://nusakas.netlify.app']
-      : ['https://nusakas.app', 'https://nusakas.netlify.app', 'http://localhost:3001', 'http://localhost:3000'];
+      : ['https://nusakas.app', 'https://nusakas.netlify.app', 'http://localhost:3002', 'http://localhost:3000'];
     
     if (allowedOrigins.includes(origin)) {
       callback(null, true);
@@ -49,7 +49,7 @@ app.use((req: Request, res: Response, next) => {
   const origin = req.headers.origin;
   const allowedOrigins = env.NODE_ENV === 'production' 
     ? ['https://nusakas.app', 'https://nusakas.netlify.app']
-    : ['https://nusakas.app', 'https://nusakas.netlify.app', 'http://localhost:3001', 'http://localhost:3000'];
+    : ['https://nusakas.app', 'https://nusakas.netlify.app', 'http://localhost:3002', 'http://localhost:3000'];
 
   if (origin && allowedOrigins.includes(origin)) {
     res.setHeader('Access-Control-Allow-Origin', origin);

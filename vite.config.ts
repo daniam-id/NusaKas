@@ -10,7 +10,7 @@ export default defineConfig(({ mode }) => {
     
     return {
       server: {
-        port: 3001,
+        port: 3002,
         host: '0.0.0.0',
         allowedHosts: [
           'localhost',
