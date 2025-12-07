@@ -137,7 +137,7 @@ Bot: "✅ Laporan custom periode generated
 *Contoh interaksi dengan WhatsApp bot untuk pencatatan transaksi*
 
 ### Dashboard Real-time
-![Dashboard](screenshots/WhatsApp%20Image%202025-12-07%20at%2023.23.46.jpeg)
+![Dashboard](screenshots/WhatsApp%20Image%202025-12-07%20at%2023.24.44.jpeg)
 
 *Tampilan dashboard dengan grafik dan statistik real-time*
 
@@ -152,7 +152,7 @@ Bot: "✅ Laporan custom periode generated
 *Step-by-step registrasi multi-platform (Web & WhatsApp)*
 
 ### Transaction History
-![Transaction History](screenshots/WhatsApp%20Image%202025-12-07%20at%2023.24.44.jpeg)
+![Transaction History](screenshots/WhatsApp%20Image%202025-12-07%20at%2023.23.46.jpeg)
 
 *View riwayat transaksi dan analisis data*
 
@@ -375,8 +375,6 @@ Pastikan `VITE_USE_LOCAL_API=true` di file `.env`
 ---
 
 ## 👥 Tim Pengembang
-
-- **daniam-id** — Fullstack Developer
   
 - **daniam-id** — Fullstack Developer & Founder NusaKas
   
