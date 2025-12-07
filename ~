@@ -1,6 +1,0 @@
-Hapus bagian ini:  
-<div class="inline-flex items-ce...">
-  <svg ...>
-</div>
-  in LoginPage (at //contributing-hewlett-secondary-fixed.trycloudflare.com/pages/LoginPage.tsx)
-  in AuthProvider (at //contributing-hewlett-secondary-fixed.trycloudflare.com/context/AuthContext.tsx)

@@ -15,9 +15,7 @@ export default defineConfig(({ mode }) => {
         allowedHosts: [
           'localhost',
           '127.0.0.1',
-          '.trycloudflare.com',
-          '.ngrok.io',
-          '.localtunnel.me'
+          '.trycloudflare.com'
         ]
       },
       plugins: [react()],

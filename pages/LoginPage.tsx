@@ -13,7 +13,6 @@ export const LoginPage: React.FC = () => {
   const [step, setStep] = useState<Step>('phone');
   const [phone, setPhone] = useState('');
   const [pin, setPin] = useState('');
-  const [otp, setOtp] = useState('');
   const [storeName, setStoreName] = useState('');
   const [ownerName, setOwnerName] = useState('');
   const [newPin, setNewPin] = useState('');
@@ -39,7 +38,6 @@ export const LoginPage: React.FC = () => {
 
   const resetForm = () => {
     setPin('');
-    setOtp('');
     setStoreName('');
     setOwnerName('');
     setNewPin('');
@@ -174,26 +172,7 @@ export const LoginPage: React.FC = () => {
     }
   };
 
-  // Verify OTP for registration
-  const handleVerifyOtp = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setError('');
-    setIsLoading(true);
 
-    try {
-      const formattedPhone = formatPhone(phone);
-      const res = await authApi.verifyOtp(formattedPhone, otp);
-
-      if (res.data.success) {
-        setTempToken(res.data.data.temp_token);
-        setStep('setup');
-      }
-    } catch (err: any) {
-      setError(err.response?.data?.error || 'Kode OTP tidak valid.');
-    } finally {
-      setIsLoading(false);
-    }
-  };
 
   // Complete registration with store name and PIN
   const handleCompleteRegistration = async (e: React.FormEvent) => {
@@ -441,30 +420,7 @@ export const LoginPage: React.FC = () => {
         </div>
       )}
 
-      {/* Manual OTP entry fallback */}
-      <div className="mt-6 pt-6 border-t border-gray-200">
-        <p className="text-xs text-gray-500 text-center mb-3">
-          Atau masukkan kode OTP manual:
-        </p>
-        <form onSubmit={handleVerifyOtp} className="flex gap-2">
-          <input
-            type="text"
-            inputMode="numeric"
-            value={otp}
-            onChange={(e) => setOtp(e.target.value.replace(/\D/g, '').slice(0, 6))}
-            placeholder="1234"
-            maxLength={6}
-            className="flex-1 px-4 py-2 rounded-lg border border-gray-200 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 outline-none transition-all text-center text-lg tracking-widest font-mono"
-          />
-          <button
-            type="submit"
-            disabled={isLoading || otp.length < 4}
-            className="px-4 py-2 bg-[#31694E] text-white rounded-lg font-medium hover:bg-[#27543f] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-          >
-            {isLoading ? <Loader2 className="h-5 w-5 animate-spin" /> : <ArrowRight className="h-5 w-5" />}
-          </button>
-        </form>
-      </div>
+
     </div>
   );
 

@@ -29,7 +29,6 @@ const corsOptions = {
     const allowedOrigins = [
       'https://nusakas.app',
       'https://meant-serves-voting-catalog.trycloudflare.com',
-      'https://contributing-hewlett-secondary-fixed.trycloudflare.com',
       'http://localhost:3001',
       'http://localhost:3000'
     ];
@@ -52,7 +51,6 @@ app.use((req: Request, res: Response, next) => {
   const allowedOrigins = [
     'https://nusakas.app',
     'https://meant-serves-voting-catalog.trycloudflare.com',
-    'https://contributing-hewlett-secondary-fixed.trycloudflare.com',
     'http://localhost:3001',
     'http://localhost:3000'
   ];
