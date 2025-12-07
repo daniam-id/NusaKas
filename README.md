@@ -5,15 +5,48 @@
 [![Node.js](https://img.shields.io/badge/Node.js-20+-green)](https://nodejs.org/)
 [![Gemini AI](https://img.shields.io/badge/Gemini%20AI-FF6D00?logo=google&logoColor=white)](https://aistudio.google.com/)
 
-**NusaKas** adalah aplikasi manajemen kas modern untuk UMKM Indonesia dengan fitur:
-- 📱 **WhatsApp Bot** — Catat transaksi langsung dari chat
-- 🤖 **AI-Powered** — Analisis struk otomatis dengan Google Gemini
-- 📊 **Dashboard Real-time** — Pantau keuangan dari mana saja
-- 📄 **Laporan PDF** — Generate laporan keuangan otomatis
+**NusaKas** adalah aplikasi manajemen kas modern untuk UMKM Indonesia yang mengubah cara UMKM mencatat keuangan. Dengan **AI Gemini** dan **WhatsApp Bot**, UMKM bisa catat transaksi dengan chat, analisis struk otomatis, dan monitor keuangan real-time.
+
+**🎯 Target:** Warung, toko kelontong, usaha makanan, dan UMKM tradisional Indonesia
+**⚡ Quick Start:** Kirim "Pemasukan 100000" ke bot WhatsApp untuk coba langsung
+**🚀 Demo:** [Link Live Demo] (bisa ditambahkan setelah deploy)
+
+---
+
+## 💡 Mengapa NusaKas?
+
+**Mengapa memilih NusaKas dibanding aplikasi keuangan tradisional?**
+
+- ✅ **Catat transaksi via chat** — Tidak perlu buka aplikasi, cukup kirim pesan ke WhatsApp
+- ✅ **AI analisis struk otomatis** — Upload foto struk, bot extract data lengkap (toko, item, harga)  
+- ✅ **WhatsApp-first design** — Platform yang sudah familiar bagi UMKM Indonesia
+- ✅ **Gratis untuk UMKM skala kecil** — Tidak ada fee per transaksi
+- ✅ **Real-time insights** — Dashboard otomatis dengan AI recommendations
+- ✅ **Multi-platform** — Web + WhatsApp, data sinkron otomatis
+
+---
+
+## 📋 Table of Contents
+
+- [🚀 Quick Start](#quick-start)
+- [💡 Value Proposition](#mengapa-nusakas)
+- [✨ Fitur Utama](#fitur-utama--cara-penggunaan)
+- [📸 Screenshot Aplikasi](#screenshot-aplikasi)
+- [📋 Prerequisites](#prerequisites)
+- [🚀 Instalasi](#instalasi--step-by-step)
+- [🐳 Docker](#menjalankan-dengan-docker-opsional)
+- [📁 Struktur Proyek](#struktur-proyek)
+- [🔧 Environment Variables](#environment-variables)
+- [🧪 Scripts](#scripts)
+- [🐛 Troubleshooting](#troubleshooting)
+- [👥 Tim Pengembang](#tim-pengembang)
+- [📄 Lisensi](#lisensi)
 
 ---
 
 ## ✨ Fitur Utama & Cara Penggunaan
+
+**🎯 Target Audience:** UMKM Indonesia yang pakai WhatsApp harian
 
 ### 📱 WhatsApp Bot — Catat Transaksi via Chat
 
@@ -132,20 +165,29 @@ Bot: "✅ Laporan custom periode generated
 
 ## 📸 Screenshot Aplikasi
 
+**Lihat NusaKas dalam aksi:**
+
 ![WhatsApp Chat](screenshots/WhatsApp%20Image%202025-12-07%20at%2023.17.13.jpeg)
 
+*Contoh interaksi dengan WhatsApp bot untuk pencatatan transaksi*
 
-![Dashboard](screenshots/WhatsApp%20Image%202025-12-07%20at%2023.24.44.jpeg)
+![Dashboard](screenshots/WhatsApp%20Image%202025-12-07%20at%2023.23.46.jpeg)
 
+*Tampilan dashboard dengan grafik dan statistik real-time*
 
 ![AI Analysis](screenshots/WhatsApp%20Image%202025-12-07%20at%2023.23.53.jpeg)
 
+*Contoh analisis struk belanja dengan AI untuk ekstraksi data otomatis*
 
 ![Registration](screenshots/WhatsApp%20Image%202025-12-07%20at%2023.24.25(1).jpeg)
 
+*Step-by-step registrasi multi-platform (Web & WhatsApp)*
 
-![Transaction History](screenshots/WhatsApp%20Image%202025-12-07%20at%2023.23.46.jpeg)
+![Transaction History](screenshots/WhatsApp%20Image%202025-12-07%20at%2023.24.44.jpeg)
 
+*View riwayat transaksi dan analisis data*
+
+---
 
 ---
 
@@ -264,13 +306,6 @@ npm run dev:both
 | Frontend | http://localhost:3001 |
 | Backend API | http://localhost:3000 |
 | Health Check | http://localhost:3000/health |
-
-### 7. Setup WhatsApp Bot (Pertama Kali)
-
-1. Buka terminal backend, akan muncul **QR Code**
-2. Buka WhatsApp di HP → Settings → Linked Devices
-3. Scan QR Code
-4. Bot siap digunakan!
 
 ---
 
