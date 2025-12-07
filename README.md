@@ -267,7 +267,8 @@ export default defineConfig({
 
 * **daniam-id** — Fullstack Developer & Founder NusaKas
   [https://github.com/daniam-id](https://github.com/daniam-id)
-
+* **NadifFijri28** — Co-Founder NusaKas
+  [https://github.com/NadifFijri28](https://github.com/NadifFijri28)
 ---
 
 # ⭐ Dukung Proyek Ini
