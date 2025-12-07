@@ -1,7 +1,7 @@
 import axios, { AxiosError, InternalAxiosRequestConfig } from 'axios';
 
 // API Configuration - Local Development vs Production
-const CLOUDFLARE_API_URL = 'https://meant-serves-voting-catalog.trycloudflare.com/api';
+const PRODUCTION_API_URL = 'https://api.nusakas.app/api';
 const LOCAL_API_URL = 'http://localhost:3000/api';
 
 // Environment-based API endpoint selection
@@ -9,13 +9,9 @@ const getApiBaseUrl = () => {
     const isDevelopment = import.meta.env.DEV || import.meta.env.VITE_USE_LOCAL_API === 'true';
     
     if (isDevelopment) {
-        console.log('[DEBUG] 🌐 Using local development API endpoint');
-        console.log('[DEBUG] API_BASE_URL:', LOCAL_API_URL);
         return LOCAL_API_URL;
     } else {
-        console.log('[DEBUG] 🌐 Using production Cloudflare API endpoint');
-        console.log('[DEBUG] API_BASE_URL:', CLOUDFLARE_API_URL);
-        return CLOUDFLARE_API_URL;
+        return PRODUCTION_API_URL;
     }
 };
 
@@ -24,25 +20,19 @@ const API_BASE_URL = getApiBaseUrl();
 // Export endpoint configuration for external use
 export const API_ENDPOINTS = {
     LOCAL: LOCAL_API_URL,
-    PRODUCTION: CLOUDFLARE_API_URL,
+    PRODUCTION: PRODUCTION_API_URL,
     CURRENT: API_BASE_URL
 } as const;
 
 /**
  * API Configuration - Development vs Production
  * 
- * Local Development:
- * - LOCAL: http://localhost:3000/api (used when VITE_USE_LOCAL_API=true or in development mode)
+ * Endpoints:
+ * - LOCAL: http://localhost:3000/api (development)
+ * - PRODUCTION: https://api.nusakas.app/api (production)
  * 
- * Production:
- * - PRODUCTION: https://meant-serves-voting-catalog.trycloudflare.com/api
- * 
- * The endpoint is automatically selected based on environment:
- * - Development: Uses localhost:3000 for local backend testing
- * - Production: Uses Cloudflare endpoint for deployed application
- * 
- * To force local development endpoint in production build:
- * - Set VITE_USE_LOCAL_API=true in environment variables
+ * Auto-selected based on environment.
+ * Override with VITE_USE_LOCAL_API=true for local testing.
  */
 
 export const api = axios.create({

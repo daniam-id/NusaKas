@@ -26,12 +26,10 @@ const corsOptions = {
     // Allow requests with no origin (like mobile apps or curl requests)
     if (!origin) return callback(null, true);
     
-    const allowedOrigins = [
-      'https://nusakas.app',
-      'https://meant-serves-voting-catalog.trycloudflare.com',
-      'http://localhost:3001',
-      'http://localhost:3000'
-    ];
+    // Production origins only - localhost handled via env check
+    const allowedOrigins = env.NODE_ENV === 'production' 
+      ? ['https://nusakas.app']
+      : ['https://nusakas.app', 'http://localhost:3001', 'http://localhost:3000'];
     
     if (allowedOrigins.includes(origin)) {
       callback(null, true);
@@ -48,12 +46,9 @@ const corsOptions = {
 // Manual CORS middleware for all routes
 app.use((req: Request, res: Response, next) => {
   const origin = req.headers.origin;
-  const allowedOrigins = [
-    'https://nusakas.app',
-    'https://meant-serves-voting-catalog.trycloudflare.com',
-    'http://localhost:3001',
-    'http://localhost:3000'
-  ];
+  const allowedOrigins = env.NODE_ENV === 'production' 
+    ? ['https://nusakas.app']
+    : ['https://nusakas.app', 'http://localhost:3001', 'http://localhost:3000'];
 
   if (origin && allowedOrigins.includes(origin)) {
     res.setHeader('Access-Control-Allow-Origin', origin);
