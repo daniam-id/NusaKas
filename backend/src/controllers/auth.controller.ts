@@ -1,5 +1,6 @@
 import { Request, Response } from 'express';
 import { authService } from '../services/auth.service.js';
+import { registrationService } from '../services/registration.service.js';
 
 // Global WhatsApp socket reference (will be set by WhatsApp bot module)
 declare global {
@@ -12,7 +13,7 @@ declare global {
 export class AuthController {
   async login(req: Request, res: Response): Promise<void> {
     try {
-      const { wa_number } = req.body;
+      const { wa_number, pin } = req.body;
 
       if (!wa_number) {
         res.status(400).json({
@@ -22,41 +23,72 @@ export class AuthController {
         return;
       }
 
-      const { code, expiresAt } = await authService.createOtp(wa_number);
-
-      // Send OTP via WhatsApp if socket is available
-      if (global.waSock) {
-        const normalizedNumber = wa_number.replace(/\D/g, '').replace(/^0/, '62');
-        const jid = `${normalizedNumber}@s.whatsapp.net`;
+      // Check if user exists
+      const userCheck = await authService.checkUserRegistration(wa_number);
+      
+      if (userCheck.isRegistered && pin) {
+        // Existing user with PIN - use PIN authentication
+        const result = await authService.loginWithPin(wa_number, pin);
         
-        try {
-          await global.waSock.sendMessage(jid, {
-            text: `🔐 *Kode OTP NusaKas*\n\nKode verifikasi Anda: *${code}*\n\nBerlaku selama 5 menit.\nJangan bagikan kode ini kepada siapapun.`,
+        if (!result.valid) {
+          res.status(401).json({
+            success: false,
+            error: result.error || 'PIN salah',
           });
-        } catch (waError) {
-          console.error('Failed to send OTP via WhatsApp:', waError);
-          // Continue anyway - OTP is still valid
+          return;
         }
-      } else {
-        // Development mode: log OTP to console
-        console.log(`[DEV] OTP for ${wa_number}: ${code}`);
+
+        res.json({
+          success: true,
+          message: 'Login berhasil',
+          data: {
+            token: result.token,
+            user: result.user,
+            auth_method: 'pin'
+          },
+        });
+        return;
+      } else if (userCheck.isRegistered && !pin) {
+        // Existing user but no PIN provided
+        res.json({
+          success: true,
+          message: 'Silakan masukkan PIN untuk login',
+          data: {
+            requires_pin: true,
+            user: userCheck.user
+          },
+        });
+        return;
+      }
+
+      // New user - generate OTP and return WhatsApp deep link
+      const result = await registrationService.startVerification(wa_number);
+
+      if (!result.success) {
+        res.status(500).json({
+          success: false,
+          error: result.message,
+        });
+        return;
       }
 
       res.json({
         success: true,
-        message: 'OTP sent to WhatsApp',
+        message: result.message,
         data: {
-          wa_number,
-          expires_at: expiresAt.toISOString(),
+          wa_number: result.wa_number,
+          wa_link: result.wa_link,
+          expires_at: result.expires_at,
+          is_new_user: true,
           // In development, include OTP for testing
-          ...(process.env.NODE_ENV !== 'production' && { otp: code }),
+          ...(process.env.NODE_ENV !== 'production' && { otp: result.otp_code }),
         },
       });
     } catch (error) {
       console.error('Login error:', error);
       res.status(500).json({
         success: false,
-        error: 'Failed to send OTP',
+        error: 'Failed to process login',
       });
     }
   }
@@ -181,6 +213,38 @@ export class AuthController {
       res.status(500).json({
         success: false,
         error: 'Failed to check user',
+      });
+    }
+  }
+
+  async checkVerificationStatus(req: Request, res: Response): Promise<void> {
+    try {
+      const { wa_number } = req.body;
+
+      if (!wa_number) {
+        res.status(400).json({
+          success: false,
+          error: 'WhatsApp number is required',
+        });
+        return;
+      }
+
+      const result = await registrationService.checkVerificationStatus(wa_number);
+
+      res.json({
+        success: result.success,
+        message: result.message,
+        data: result.success ? {
+          token: result.token,
+          user: result.user,
+          wa_number: result.wa_number,
+        } : undefined,
+      });
+    } catch (error) {
+      console.error('Check verification status error:', error);
+      res.status(500).json({
+        success: false,
+        error: 'Failed to check verification status',
       });
     }
   }

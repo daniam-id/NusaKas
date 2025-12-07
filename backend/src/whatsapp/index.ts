@@ -122,23 +122,7 @@ class WhatsAppService {
         qrTimeout: 300000,
         defaultQueryTimeoutMs: 300000,
         
-        // Enhanced socket configuration
-        socketConfig: {
-          connectTimeout: 300000,
-          defaultTimeout: 300000,
-          keepAlive: true,
-          perMessageDeflate: false,
-          maxPayload: 32 * 1024 * 1024, // 32MB
-          headers: {
-            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
-            'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
-            'Accept-Language': 'en-US,en;q=0.5',
-            'Accept-Encoding': 'gzip, deflate, br',
-            'DNT': '1',
-            'Connection': 'keep-alive',
-            'Upgrade-Insecure-Requests': '1',
-          }
-        },
+
         
         // App state verification bypass
         appStateMacVerification: {
@@ -245,7 +229,7 @@ class WhatsAppService {
         if (upsert.type !== 'notify') return;
 
         for (const msg of upsert.messages) {
-          if (!msg.key.fromMe && msg.message) {
+          if (!msg.key?.fromMe && msg.message) {
             try {
               await messageHandler.handle(this.sock!, msg);
             } catch (error) {
@@ -292,7 +276,7 @@ class WhatsAppService {
     if (!this.sock) {
       throw new Error('WhatsApp not connected');
     }
-    const buffer = await downloadMediaMessage(message, 'buffer', {});
+    const buffer = await downloadMediaMessage(message as any, 'buffer', {});
     return buffer as Buffer;
   }
 
@@ -300,12 +284,12 @@ class WhatsAppService {
   private async validateSession(state: any): Promise<boolean> {
     try {
       // Check required fields for Baileys v6.8.0+
-      const requiredFields = [
-        'creds',
-        'keys',
-        'registered', // For v7.0.0+ compatibility
-        'me' // User info
-      ];
+      // const requiredFields = [
+      //   'creds',
+      //   'keys',
+      //   'registered', // For v7.0.0+ compatibility
+      //   'me' // User info
+      // ];
 
       // Validate basic structure
       if (!state || typeof state !== 'object') {
@@ -329,8 +313,8 @@ class WhatsAppService {
       console.log('[WA] Session validation: ✅ Valid');
       return true;
 
-    } catch (error) {
-      console.log('[WA] Session validation failed:', error);
+    } catch {
+      console.log('[WA] Session validation failed');
       return false;
     }
   }
@@ -355,7 +339,7 @@ class WhatsAppService {
   }
 
   // Enhanced error handling with specific error codes
-  private async handleConnectionError(error: any, lastDisconnect: any): Promise<boolean> {
+  private async handleConnectionError(_: any, lastDisconnect: any): Promise<boolean> {
     const reason = lastDisconnect?.error?.output?.statusCode;
     
     console.log(`[WA] Connection error detected. Reason: ${reason}`);

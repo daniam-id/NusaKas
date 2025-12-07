@@ -33,6 +33,9 @@ export interface VerificationResult {
   success: boolean;
   message: string;
   wa_link?: string;
+  wa_number?: string;
+  otp_code?: string;
+  expires_at?: string;
   user?: User;
   token?: string;
 }

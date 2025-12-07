@@ -273,10 +273,25 @@ Respond ONLY with valid JSON.`;
   private quickPatternMatch(text: string): CommandIntent | null {
     const lowerText = text.toLowerCase().trim();
 
-    // VERIFY OTP: "VERIFY 1234", "verify 5678"
+    // VERIFY OTP: Various formats
+    // - "VERIFY 1234", "verify 5678"
+    // - "Hi, ini kode OTP saya: 1234" (from WhatsApp deep link)
+    // - Just the OTP code "1234"
     const verifyMatch = text.match(/^verify\s+(\d{4,6})$/i);
     if (verifyMatch) {
       return { intent: 'VERIFY_OTP', otpCode: verifyMatch[1] };
+    }
+    
+    // Match "Hi, ini kode OTP saya: 1234"
+    const otpDeepLinkMatch = text.match(/(?:kode\s*otp\s*(?:saya)?[:\s]*|otp[:\s]+)(\d{4,6})/i);
+    if (otpDeepLinkMatch) {
+      return { intent: 'VERIFY_OTP', otpCode: otpDeepLinkMatch[1] };
+    }
+    
+    // Match standalone OTP code (4-6 digits only)
+    if (/^\d{4,6}$/.test(lowerText)) {
+      // Could be OTP, but let it fall through for other processing
+      // Only match if this looks like OTP context
     }
 
     // Onboarding style choice: "1", "2", "3" (single digit for style selection)

@@ -1,31 +1,48 @@
 import axios, { AxiosError, InternalAxiosRequestConfig } from 'axios';
 
-// Production API Configuration
+// API Configuration - Local Development vs Production
 const CLOUDFLARE_API_URL = 'https://meant-serves-voting-catalog.trycloudflare.com/api';
+const LOCAL_API_URL = 'http://localhost:3000/api';
 
-// Fixed API endpoint selection - Cloudflare only
+// Environment-based API endpoint selection
 const getApiBaseUrl = () => {
-    console.log('[DEBUG] 🌐 Using Cloudflare API endpoint exclusively');
-    console.log('[DEBUG] API_BASE_URL:', CLOUDFLARE_API_URL);
-    return CLOUDFLARE_API_URL;
+    const isDevelopment = import.meta.env.DEV || import.meta.env.VITE_USE_LOCAL_API === 'true';
+    
+    if (isDevelopment) {
+        console.log('[DEBUG] 🌐 Using local development API endpoint');
+        console.log('[DEBUG] API_BASE_URL:', LOCAL_API_URL);
+        return LOCAL_API_URL;
+    } else {
+        console.log('[DEBUG] 🌐 Using production Cloudflare API endpoint');
+        console.log('[DEBUG] API_BASE_URL:', CLOUDFLARE_API_URL);
+        return CLOUDFLARE_API_URL;
+    }
 };
 
 const API_BASE_URL = getApiBaseUrl();
 
 // Export endpoint configuration for external use
 export const API_ENDPOINTS = {
+    LOCAL: LOCAL_API_URL,
     PRODUCTION: CLOUDFLARE_API_URL,
     CURRENT: API_BASE_URL
 } as const;
 
 /**
- * Production API Configuration
+ * API Configuration - Development vs Production
  * 
- * Using Cloudflare production endpoint exclusively:
+ * Local Development:
+ * - LOCAL: http://localhost:3000/api (used when VITE_USE_LOCAL_API=true or in development mode)
+ * 
+ * Production:
  * - PRODUCTION: https://meant-serves-voting-catalog.trycloudflare.com/api
  * 
- * This configuration is fixed for production deployment.
- * No local development endpoint available.
+ * The endpoint is automatically selected based on environment:
+ * - Development: Uses localhost:3000 for local backend testing
+ * - Production: Uses Cloudflare endpoint for deployed application
+ * 
+ * To force local development endpoint in production build:
+ * - Set VITE_USE_LOCAL_API=true in environment variables
  */
 
 export const api = axios.create({
@@ -100,11 +117,32 @@ export const authApi = {
   login: (wa_number: string, pin: string) =>
     api.post<{ success: boolean; data: { token: string; user: User } }>('/auth/login', { wa_number, pin }),
 
-  // Registration flow - Step 1: Send OTP
+  // Registration flow - Step 1: Send OTP (returns WhatsApp deep link)
   sendOtp: (wa_number: string) =>
-    api.post<{ success: boolean; data: { wa_number: string; expires_at: string; otp?: string } }>('/auth/register/send-otp', { wa_number }),
+    api.post<{ 
+      success: boolean; 
+      data: { 
+        wa_number: string; 
+        wa_link: string;
+        expires_at: string; 
+        is_new_user: boolean;
+        otp?: string;
+      } 
+    }>('/auth/register/send-otp', { wa_number }),
 
-  // Registration flow - Step 2: Verify OTP
+  // Registration flow - Step 1.5: Check verification status (polling)
+  checkVerificationStatus: (wa_number: string) =>
+    api.post<{ 
+      success: boolean; 
+      message: string;
+      data?: { 
+        token: string; 
+        user: User;
+        wa_number: string;
+      } 
+    }>('/auth/register/check-status', { wa_number }),
+
+  // Registration flow - Step 2: Verify OTP (legacy - kept for manual entry)
   verifyOtp: (wa_number: string, code: string) =>
     api.post<{ success: boolean; data: { temp_token: string } }>('/auth/register/verify-otp', { wa_number, code }),
 

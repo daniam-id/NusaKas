@@ -21,6 +21,9 @@ export const env = {
   // JWT
   JWT_SECRET: process.env.JWT_SECRET || 'development_secret_change_in_production',
   JWT_EXPIRES_IN: '7d',
+  
+  // WhatsApp Bot
+  WHATSAPP_BOT_NUMBER: process.env.WHATSAPP_BOT_NUMBER || '',
 } as const;
 
 // Validate required environment variables

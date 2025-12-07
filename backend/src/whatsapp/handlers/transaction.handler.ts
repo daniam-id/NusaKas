@@ -87,13 +87,14 @@ Ketik "hapus #${transaction.daily_id}" untuk membatalkan.`,
     user: UserRecord,
     caption?: string
   ): Promise<void> {
-    const jid = message.key.remoteJid!;
+    if (!message.key?.remoteJid) return;
+    const jid = message.key.remoteJid;
 
     try {
       await sock.sendMessage(jid, { text: '🔍 Menganalisis gambar...' });
 
       // Download image
-      const buffer = await downloadMediaMessage(message, 'buffer', {});
+      const buffer = await downloadMediaMessage(message as any, 'buffer', {});
       const imageBuffer = buffer as Buffer;
 
       // Get mime type

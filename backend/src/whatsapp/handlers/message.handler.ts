@@ -11,8 +11,9 @@ import type { User } from '../../types/index.js';
 
 class MessageHandler {
   async handle(sock: WASocket, message: proto.IWebMessageInfo): Promise<void> {
+    if (!message.key?.remoteJid) return;
     const jid = message.key.remoteJid;
-    if (!jid || jid.endsWith('@g.us')) return; // Skip group messages
+    if (jid.endsWith('@g.us')) return; // Skip group messages
 
     const waNumber = jid.replace('@s.whatsapp.net', '');
     const msgContent = message.message;
@@ -22,19 +23,30 @@ class MessageHandler {
     console.log(`[WA] Message from ${waNumber}`);
 
     try {
-      // Ensure user exists (auto-register)
-      const user = await userHandler.ensureUser(waNumber, sock, jid);
-      if (!user) {
-        console.error('[WA] Failed to get/create user');
-        return;
-      }
-
-      // Check message type
+      // Get text message first to check for OTP
       const imageMessage = msgContent.imageMessage;
       const textMessage = 
         msgContent.conversation ||
         msgContent.extendedTextMessage?.text ||
         (imageMessage?.caption);
+
+      // Check for OTP verification BEFORE auto-creating user
+      // This handles the new registration flow where user sends OTP to bot
+      if (textMessage) {
+        const quickIntent = this.quickCheckOtp(textMessage);
+        if (quickIntent) {
+          console.log(`[WA] OTP verification attempt from ${waNumber}`);
+          await onboardingHandler.handleVerifyOTP(sock, jid, waNumber, quickIntent.otpCode);
+          return;
+        }
+      }
+
+      // Ensure user exists (auto-register for existing flow)
+      const user = await userHandler.ensureUser(waNumber, sock, jid);
+      if (!user) {
+        console.error('[WA] Failed to get/create user');
+        return;
+      }
 
       // Handle image message (receipt/proof)
       if (imageMessage) {
@@ -56,6 +68,26 @@ class MessageHandler {
     }
   }
 
+  /**
+   * Quick check for OTP message patterns (without full AI parsing)
+   * This runs BEFORE user auto-creation to support new registration flow
+   */
+  private quickCheckOtp(text: string): { otpCode: string } | null {
+    // Match "VERIFY 1234"
+    const verifyMatch = text.match(/^verify\s+(\d{4,6})$/i);
+    if (verifyMatch) {
+      return { otpCode: verifyMatch[1] };
+    }
+    
+    // Match "Hi, ini kode OTP saya: 1234" (from WhatsApp deep link)
+    const otpDeepLinkMatch = text.match(/(?:kode\s*otp\s*(?:saya)?[:\s]*|otp[:\s]+)(\d{4,6})/i);
+    if (otpDeepLinkMatch) {
+      return { otpCode: otpDeepLinkMatch[1] };
+    }
+
+    return null;
+  }
+
   private async handleText(
     sock: WASocket,
     jid: string,
@@ -68,11 +100,8 @@ class MessageHandler {
 
     console.log(`[WA] Intent: ${intent.intent}`);
 
-    // Handle VERIFY_OTP first (before user check)
-    if (intent.intent === 'VERIFY_OTP') {
-      await onboardingHandler.handleVerifyOTP(sock, jid, waNumber, intent.otpCode);
-      return;
-    }
+    // Note: VERIFY_OTP is now handled in handle() before user creation
+    // This allows new users to verify OTP before being auto-registered
 
     // Check if user is in onboarding flow
     const onboardingState = getOnboardingState(waNumber);

@@ -4,8 +4,11 @@ import type { User, PendingRegistration, VerificationResult } from '../types/ind
 import jwt from 'jsonwebtoken';
 
 const OTP_LENGTH = 4;
-const OTP_EXPIRY_MINUTES = 10;
+const OTP_EXPIRY_MINUTES = 5;
 const JWT_EXPIRY = '7d';
+
+// Pre-filled message template for WhatsApp deep link
+const OTP_MESSAGE_TEMPLATE = 'Hi, ini kode OTP saya:';
 
 export class RegistrationService {
   private generateOtp(): string {
@@ -27,6 +30,7 @@ export class RegistrationService {
     const supabase = getSupabase();
     const normalizedNumber = this.normalizePhoneNumber(waNumber);
     const otpCode = this.generateOtp();
+    const expiresAt = new Date(Date.now() + OTP_EXPIRY_MINUTES * 60 * 1000);
 
     const { error } = await supabase
       .from('pending_registrations')
@@ -34,7 +38,7 @@ export class RegistrationService {
         wa_number: normalizedNumber,
         otp_code: otpCode,
         created_at: new Date().toISOString(),
-        expires_at: new Date(Date.now() + OTP_EXPIRY_MINUTES * 60 * 1000).toISOString(),
+        expires_at: expiresAt.toISOString(),
       }, { onConflict: 'wa_number' });
 
     if (error) {
@@ -44,29 +48,49 @@ export class RegistrationService {
       };
     }
 
-    const waLink = `https://wa.me/${normalizedNumber}?text=VERIFY%20${otpCode}`;
+    // Build WhatsApp deep link to BOT number (not user's number)
+    const botNumber = env.WHATSAPP_BOT_NUMBER.replace(/\D/g, '');
+    if (!botNumber) {
+      console.warn('[Registration] WHATSAPP_BOT_NUMBER not configured');
+      return {
+        success: false,
+        message: 'Konfigurasi bot WhatsApp belum lengkap. Hubungi admin.',
+      };
+    }
+
+    // Pre-filled message: "Hi, ini kode OTP saya: [CODE]"
+    const message = encodeURIComponent(`${OTP_MESSAGE_TEMPLATE} ${otpCode}`);
+    const waLink = `https://wa.me/${botNumber}?text=${message}`;
 
     return {
       success: true,
-      message: 'OTP berhasil dibuat. Silakan klik link untuk verifikasi via WhatsApp.',
+      message: 'Kode OTP berhasil dibuat. Klik tombol untuk kirim OTP via WhatsApp.',
       wa_link: waLink,
+      otp_code: process.env.NODE_ENV !== 'production' ? otpCode : undefined,
+      expires_at: expiresAt.toISOString(),
+      wa_number: normalizedNumber,
     };
   }
 
-  async verifyOTP(waNumber: string, otpCode: string): Promise<VerificationResult> {
+  /**
+   * Verify OTP from incoming WhatsApp message.
+   * The sender's WA number is validated against the pending registration.
+   */
+  async verifyOTP(senderWaNumber: string, otpCode: string): Promise<VerificationResult> {
     const supabase = getSupabase();
-    const normalizedNumber = this.normalizePhoneNumber(waNumber);
+    const normalizedSender = this.normalizePhoneNumber(senderWaNumber);
 
+    // Look up pending registration by OTP code first
     const { data: pendingData, error: pendingError } = await supabase
       .from('pending_registrations')
       .select('*')
-      .eq('wa_number', normalizedNumber)
+      .eq('otp_code', otpCode)
       .single();
 
     if (pendingError || !pendingData) {
       return {
         success: false,
-        message: 'Tidak ada permintaan verifikasi untuk nomor ini. Silakan daftar ulang.',
+        message: 'Kode OTP tidak ditemukan atau sudah digunakan.',
       };
     }
 
@@ -74,23 +98,25 @@ export class RegistrationService {
     const isExpired = new Date(pending.expires_at) < new Date();
 
     if (isExpired) {
-      await supabase.from('pending_registrations').delete().eq('wa_number', normalizedNumber);
+      await supabase.from('pending_registrations').delete().eq('wa_number', pending.wa_number);
       return {
         success: false,
-        message: 'Kode OTP sudah kedaluwarsa. Silakan minta kode baru.',
+        message: 'Kode OTP sudah kedaluwarsa. Silakan minta kode baru dari aplikasi.',
       };
     }
 
-    if (pending.otp_code !== otpCode) {
+    // Validate sender matches the registered number
+    if (pending.wa_number !== normalizedSender) {
       return {
         success: false,
-        message: 'Kode OTP tidak valid. Silakan coba lagi.',
+        message: 'Nomor pengirim tidak sesuai dengan nomor yang didaftarkan.',
       };
     }
 
-    await supabase.from('pending_registrations').delete().eq('wa_number', normalizedNumber);
+    // OTP valid - delete and create/get user
+    await supabase.from('pending_registrations').delete().eq('wa_number', normalizedSender);
 
-    const user = await this.getOrCreateUser(normalizedNumber);
+    const user = await this.getOrCreateUser(normalizedSender);
     const token = this.generateToken(user);
 
     return {
@@ -98,6 +124,60 @@ export class RegistrationService {
       message: 'Verifikasi berhasil! Selamat datang di NusaKas.',
       user,
       token,
+      wa_number: normalizedSender,
+    };
+  }
+
+  /**
+   * Check verification status (polling from frontend)
+   */
+  async checkVerificationStatus(waNumber: string): Promise<VerificationResult> {
+    const supabase = getSupabase();
+    const normalizedNumber = this.normalizePhoneNumber(waNumber);
+
+    // Check if user is now verified (has a record in users table)
+    const { data: userData } = await supabase
+      .from('users')
+      .select('*')
+      .eq('wa_number', normalizedNumber)
+      .single();
+
+    if (userData) {
+      const user = userData as User;
+      const token = this.generateToken(user);
+      return {
+        success: true,
+        message: 'User sudah terverifikasi.',
+        user,
+        token,
+        wa_number: normalizedNumber,
+      };
+    }
+
+    // Check if pending registration still exists
+    const { data: pendingData } = await supabase
+      .from('pending_registrations')
+      .select('expires_at')
+      .eq('wa_number', normalizedNumber)
+      .single();
+
+    if (pendingData) {
+      const isExpired = new Date(pendingData.expires_at) < new Date();
+      if (isExpired) {
+        return {
+          success: false,
+          message: 'Kode OTP sudah kedaluwarsa. Silakan minta kode baru.',
+        };
+      }
+      return {
+        success: false,
+        message: 'Menunggu verifikasi OTP via WhatsApp.',
+      };
+    }
+
+    return {
+      success: false,
+      message: 'Tidak ada permintaan verifikasi. Silakan daftar ulang.',
     };
   }
 
