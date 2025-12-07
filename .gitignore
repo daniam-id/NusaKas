@@ -1,228 +1,35 @@
-# NusaKas Project - Enhanced .gitignore
-
-# Logs
-logs
-*.log
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-pnpm-debug.log*
-lerna-debug.log*
-error.log
-access.log
-
 # Dependencies
 node_modules/
-*/node_modules/
-npm-shrinkwrap.json
-yarn.lock
-package-lock.json
 
 # Build outputs
 dist/
-dist-ssr/
-build/
-*/build/
-*.local
-*.tgz
 
-# Environment variables (CRITICAL - Contains sensitive keys)
+# Environment variables
 .env
-.env.local
-.env.production
-.env.staging
-.env.development
-.env.test
-.env.example
-*/.env
-*/.env.local
-*/.env.production
-frontend/.env
-backend/.env
 .env.*
 !.env.example
 
-# Local configuration files
-config/local.json
-config/local.js
-config/local.ts
-settings/local.json
-settings/local.js
-
-# WhatsApp Bot specific files
-baileys-session/
-baileys-auth-info/
-.wa-sessions/
-whatsapp-sessions/
-wa_credentials/
-wa_session_*
-
-# Baileys session files (CRITICAL - Contains sensitive credentials)
-.wa-session/
+# WhatsApp session (sensitive credentials)
 .wa-session/
 */.wa-session/
-*.auth_info.json
-*.auth_info_multi_device.json
-*.creds.json
-*.me.json
-*.noise-key-*
-*.pre-key-*
-*.session-*
 
-# Baileys temporary files
-*.baileys-session
-baileys_temp/
-temp_wa_*
-session-backup/
-session-logs/
+# Logs
+*.log
 
-# Supabase
-.supabase/
-supabase_temp/
-
-# Database files
-*.db
-*.sqlite
-*.sqlite3
-database.db
-
-# AI Service temporary files
-gemini-temp/
-ai-cache/
-temp-images/
-temp-receipts/
-temp-uploads/
-
-# PDF generation temp files
-pdf-temp/
-temp-pdfs/
-report-cache/
-
-# Editor directories and files
-.vscode/*
-!.vscode/extensions.json
+# Editor
+.vscode/
 .idea/
+
+# OS
 .DS_Store
-*.suo
-*.ntvs*
-*.njsproj
-*.sln
-*.sw?
-*.sublime-*
-
-# Operating System files
 Thumbs.db
-ehthumbs.db
-Desktop.ini
-$RECYCLE.BIN/
 
-# Runtime files
-*.pid
-*.seed
-*.pid.lock
-*.tgz
-*.tar.gz
-
-# Coverage directory used by tools like istanbul
-coverage/
-*.lcov
-.nyc_output
-
-# Dependency directories
-jspm_packages/
-
-# Optional npm cache directory
-.npm
-
-# Optional eslint cache
-.eslintcache
-
-# Output of 'npm pack'
-*.tgz
-
-# Yarn Integrity file
-.yarn-integrity
-
-# parcel-bundler cache (https://parceljs.org/)
-.cache
-.parcel-cache
-
-# Next.js build output
-.next
-
-# Nuxt.js build / generate output
-.nuxt
-dist
-
-# Storybook build outputs
-.out
-.storybook-out
-
-# Temporary folders
-tmp/
-temp/
-.tmp/
-
-# Testing
-coverage/
-.nyc_output/
-test-results/
-playwright-report/
-
-# Development tools
-.prettier/
-.eslintcache
-.stylelintcache
-
-# Application specific
-uploads/
-screenshots/
-session-data/
-user-sessions/
-auth-tokens/
-jwt-secrets/
-
-# Backup files
-*.bak
-*.backup
-*.old
-*.orig
-
-# Documentation builds
-docs/build/
-*.pdf
-*.html
-
-# Machine Learning models (if any)
-models/
-*.model
-*.bin
-data-models/
-
-# Docker (only override files)
+# Docker override
 docker-compose.override.yml
 
-# Package managers
-.pnpm-store/
-.yarn/cache/
-.yarn/unplugged/
-.yarn/build-state.yml
-.yarn/install-state.gz
-.pnp.*
-
-# Development tools and metadata
+# Dev tools & docs (local only)
 .claude/
-.github/
 .spec-workflow/
-.archive/
-
-# Development/Debug scripts (Optional - Remove if needed)
-scripts/*.sh
-scripts/fix_515_error.sh
-scripts/environment_optimizer.sh
-scripts/comprehensive_515_test.sh
-monitor_515_fix.sh
-run_515_fix.sh
-technical_overview.md
-AGENTS.md
 prd/
+AGENTS.md
+technical_overview.md
