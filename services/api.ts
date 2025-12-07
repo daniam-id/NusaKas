@@ -1,7 +1,7 @@
 import axios, { AxiosError, InternalAxiosRequestConfig } from 'axios';
 
 // API Configuration - Local Development vs Production
-const PRODUCTION_API_URL = 'https://api.nusakas.app/api';
+const PRODUCTION_API_URL = 'http://216.98.13.43:3000/api';
 const LOCAL_API_URL = 'http://localhost:3000/api';
 
 // Environment-based API endpoint selection
