@@ -3,6 +3,7 @@
 [![TypeScript](https://img.shields.io/badge/TypeScript-blue)](https://www.typescriptlang.org/)
 [![React](https://img.shields.io/badge/React-19-blue)](https://react.dev/)
 [![Node.js](https://img.shields.io/badge/Node.js-20+-green)](https://nodejs.org/)
+[![Gemini AI](https://img.shields.io/badge/Gemini%20AI-FF6D00?logo=google&logoColor=white)](https://aistudio.google.com/)
 
 **NusaKas** adalah aplikasi manajemen kas modern untuk UMKM Indonesia dengan fitur:
 - 📱 **WhatsApp Bot** — Catat transaksi langsung dari chat
