@@ -43,7 +43,7 @@ Dengan integrasi **Google Gemini AI**, NusaKas mampu memberikan insight keuangan
 
 * Tampilan optimal di PC, tablet, maupun mobile
 
----``````
+  
 
 # 🧩 Prerequisites (Wajib Dipenuhi Sebelum Instalasi)
 
