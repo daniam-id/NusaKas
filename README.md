@@ -275,3 +275,13 @@ export default defineConfig({
 Jika kamu merasa terbantu, jangan lupa **beri ⭐ di GitHub!**
 
 ---
+
+# Dokumentasi Foto
+## Tampilan Web Login
+![Alt Text](https://github.com/daniam-id/NusaKas/blob/main/SS/WhatsApp%20Image%202025-12-07%20at%2023.17.17_6e1dc31f.jpg)
+![Alt Text](https://github.com/daniam-id/NusaKas/blob/main/SS/WhatsApp%20Image%202025-12-07%20at%2023.23.57_636cbaa1.jpg)
+![Alt Text](https://github.com/daniam-id/NusaKas/blob/main/SS/WhatsApp%20Image%202025-12-07%20at%2023.24.29_a66752d4.jpg)
+![Alt Text](https://github.com/daniam-id/NusaKas/blob/main/SS/WhatsApp%20Image%202025-12-07%20at%2023.24.48_80fb887e.jpg)
+
+## Respons Bot WA
+![Alt Text](http://github.com/daniam-id/NusaKas/blob/main/SS/WhatsApp%20Image%202025-12-07%20at%2023.23.46_7aeffaf8.jpg)
