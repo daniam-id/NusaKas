@@ -104,6 +104,121 @@ api.interceptors.response.use(
   }
 );
 
+// Registration API (new flow)
+export const registerApi = {
+  // Start web registration - generates OTP and verification link
+  startWebRegistration: (wa_number: string) =>
+    api.post<{
+      success: boolean;
+      message: string;
+      data: {
+        otp_id: string;
+        expires_at: string;
+        verification_link: string;
+      };
+    }>('/register/web/start', { wa_number }),
+
+  // Verify OTP and get session
+  verifyOTP: (wa_number: string, otp_code: string) =>
+    api.post<{
+      success: boolean;
+      message: string;
+      data: {
+        session_id: string;
+        registration_token: string;
+      };
+    }>('/register/web/verify-otp', { wa_number, otp_code }),
+
+  // Resend OTP
+  resendOTP: (wa_number: string) =>
+    api.post<{
+      success: boolean;
+      message: string;
+      data: {
+        expires_at: string;
+      };
+    }>('/register/web/resend-otp', { wa_number }),
+
+  // Get session data
+  getSession: (session_id: string) =>
+    api.get<{
+      success: boolean;
+      data: {
+        id: string;
+        current_step: string;
+        status: string;
+        collected_data: {
+          store_name: string | null;
+          owner_name: string | null;
+          has_pin: boolean;
+        };
+        expires_at: string;
+      };
+    }>(`/register/session/${session_id}`),
+
+  // Update session data
+  updateSession: (session_id: string, data: { store_name?: string; owner_name?: string; pin?: string }) =>
+    api.patch<{
+      success: boolean;
+      message: string;
+      data: {
+        is_complete: boolean;
+      };
+    }>(`/register/session/${session_id}`, data),
+
+  // Complete registration
+  completeRegistration: (session_id: string, data?: { store_name?: string; owner_name?: string; pin?: string }) =>
+    api.post<{
+      success: boolean;
+      message: string;
+      data: {
+        user: {
+          id: string;
+          wa_number: string;
+          store_name: string;
+          owner_name: string;
+        };
+        token: string;
+      };
+    }>('/register/complete', { session_id, ...data }),
+
+  // Initiate hybrid flow
+  initiateHybrid: (wa_number: string, direction: 'web_to_whatsapp' | 'whatsapp_to_web') =>
+    api.post<{
+      success: boolean;
+      message: string;
+      data: {
+        link: string;
+        otp_code: string;
+        expires_at: string;
+      };
+    }>('/register/hybrid/initiate', { wa_number, direction }),
+
+  // Check registration status
+  getStatus: (wa_number: string) =>
+    api.get<{
+      success: boolean;
+      data: {
+        isComplete: boolean;
+        hasUser: boolean;
+        hasSession: boolean;
+        missingFields: string[];
+        canComplete: boolean;
+      };
+    }>(`/register/status?wa_number=${encodeURIComponent(wa_number)}`),
+
+  // Check OTP status
+  checkOTPStatus: (wa_number: string) =>
+    api.get<{
+      success: boolean;
+      data: {
+        hasPending: boolean;
+        expiresAt?: string;
+        attemptsRemaining?: number;
+      };
+    }>(`/register/otp-status?wa_number=${encodeURIComponent(wa_number)}`),
+};
+
 // Auth API
 export const authApi = {
   // Check if user is registered (has PIN)

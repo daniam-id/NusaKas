@@ -4,6 +4,8 @@ import { transactionHandler } from './transaction.handler.js';
 import { commandHandler } from './command.handler.js';
 import { reportHandler } from './report.handler.js';
 import { onboardingHandler } from './onboarding.handler.js';
+import { registrationRouter, getRegistrationState, setRegistrationState } from './registration-router.js';
+import { whatsappRegistrationFlow } from './whatsapp-registration.js';
 import { aiService } from '../../services/ai.service.js';
 import { settingsService } from '../../services/settings.service.js';
 import { formatReplyService } from '../../services/format-reply.service.js';
@@ -23,15 +25,13 @@ class MessageHandler {
     console.log(`[WA] Message from ${waNumber}`);
 
     try {
-      // Get text message first to check for OTP
       const imageMessage = msgContent.imageMessage;
       const textMessage = 
         msgContent.conversation ||
         msgContent.extendedTextMessage?.text ||
         (imageMessage?.caption);
 
-      // Check for OTP verification BEFORE auto-creating user
-      // This handles the new registration flow where user sends OTP to bot
+      // 1. Check for OTP verification FIRST (handles hybrid flow)
       if (textMessage) {
         const quickIntent = this.quickCheckOtp(textMessage);
         if (quickIntent) {
@@ -41,20 +41,43 @@ class MessageHandler {
         }
       }
 
-      // Ensure user exists (auto-register for existing flow)
-      const user = await userHandler.ensureUser(waNumber, sock, jid);
+      // 2. Check if user is in active registration flow
+      const registrationState = getRegistrationState(waNumber);
+      if (registrationState !== 'none' && textMessage) {
+        const handled = await this.handleRegistrationFlow(sock, jid, waNumber, textMessage);
+        if (handled) return;
+      }
+
+      // 3. Check if this is a first-time user (no account exists)
+      const isFirstTime = await registrationRouter.isFirstTimeUser(waNumber);
+      if (isFirstTime) {
+        // Handle restart command even for first-time users
+        if (textMessage && this.isRestartCommand(textMessage)) {
+          await registrationRouter.handleRestartRequest(sock, jid, waNumber);
+          return;
+        }
+        
+        // Present registration options for first-time users
+        const handled = await registrationRouter.handleFirstMessage(sock, jid, waNumber);
+        if (handled) return;
+      }
+
+      // 4. Get existing user for transaction handling
+      const user = await userHandler.getUser(waNumber);
       if (!user) {
-        console.error('[WA] Failed to get/create user');
+        // User should exist at this point, but handle edge case
+        console.log(`[WA] User not found for ${waNumber}, starting registration`);
+        await registrationRouter.handleFirstMessage(sock, jid, waNumber);
         return;
       }
 
-      // Handle image message (receipt/proof)
+      // 5. Handle image message (receipt/proof) for registered users
       if (imageMessage) {
         await transactionHandler.handleImage(sock, message, user, textMessage || undefined);
         return;
       }
 
-      // Handle text message
+      // 6. Handle text message for registered users
       if (textMessage) {
         await this.handleText(sock, jid, waNumber, user, textMessage);
         return;
@@ -66,6 +89,59 @@ class MessageHandler {
         text: '❌ Maaf, terjadi kesalahan. Silakan coba lagi.',
       });
     }
+  }
+
+  private async handleRegistrationFlow(
+    sock: WASocket,
+    jid: string,
+    waNumber: string,
+    text: string
+  ): Promise<boolean> {
+    const state = getRegistrationState(waNumber);
+
+    // Handle restart/cancel commands
+    if (this.isRestartCommand(text)) {
+      await registrationRouter.handleRestartRequest(sock, jid, waNumber);
+      return true;
+    }
+
+    if (this.isCancelCommand(text)) {
+      await registrationRouter.cancelRegistration(waNumber);
+      setRegistrationState(waNumber, 'none');
+      await sock.sendMessage(jid, {
+        text: '❌ Pendaftaran dibatalkan. Ketik apapun untuk memulai lagi.',
+      });
+      return true;
+    }
+
+    // Handle based on current registration state
+    switch (state) {
+      case 'awaiting_option':
+        return registrationRouter.handleOptionSelection(sock, jid, waNumber, text);
+
+      case 'data_collection':
+        return whatsappRegistrationFlow.handleDataInput(sock, jid, waNumber, text);
+
+      case 'verification':
+        // User is in web verification state, remind them
+        await sock.sendMessage(jid, {
+          text: '⏳ Anda sedang dalam proses verifikasi via website.\n\nKetik *ULANG* untuk memulai pendaftaran baru via WhatsApp.',
+        });
+        return true;
+
+      default:
+        return false;
+    }
+  }
+
+  private isRestartCommand(text: string): boolean {
+    const lower = text.toLowerCase().trim();
+    return lower === 'ulang' || lower === 'restart' || lower === 'start' || lower === 'daftar';
+  }
+
+  private isCancelCommand(text: string): boolean {
+    const lower = text.toLowerCase().trim();
+    return lower === 'batal' || lower === 'cancel';
   }
 
   /**

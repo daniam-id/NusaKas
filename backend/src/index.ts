@@ -27,8 +27,6 @@ const corsOptions = {
     if (!origin) return callback(null, true);
     
     const allowedOrigins = [
-      'https://nusakas.app',
-      'https://meant-serves-voting-catalog.trycloudflare.com',
       'http://localhost:3001',
       'http://localhost:3000'
     ];

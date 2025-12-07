@@ -24,6 +24,9 @@ export const env = {
   
   // WhatsApp Bot
   WHATSAPP_BOT_NUMBER: process.env.WHATSAPP_BOT_NUMBER || '',
+  
+  // Frontend
+  FRONTEND_URL: process.env.FRONTEND_URL || 'https://app.nusakas.id',
 } as const;
 
 // Validate required environment variables

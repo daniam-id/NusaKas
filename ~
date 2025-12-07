@@ -1,0 +1,75 @@
+> Saat ini, bot WhatsApp **langsung mendaftarkan user** saat pertama kali chat — padahal user belum isi data penting seperti nama, dll.  
+>  
+> **Harapan baru**:  
+> User **tidak boleh otomatis terdaftar**. Saat pertama kali chat, bot harus menawarkan **dua opsi**:  
+> 1. **Daftar via WhatsApp**  
+> 2. **Daftar via Website**  
+>  
+> ---
+>  
+> ### 🔹 **Jika user pilih "Daftar via WhatsApp"**:  
+> - Bot ajukan serangkaian pertanyaan interaktif (misal: “Siapa nama kamu?”, “Apa usaha kamu?”)  
+> - Simpan sementara di sesi (Redis/memcache)  
+> - Setelah semua data lengkap → tandai sebagai terdaftar → arahkan ke dashboard (via link web jika perlu)  
+>  
+> ### 🔹 **Jika user pilih "Daftar via Website"**:  
+> - Bot kirim **link web verifikasi OTP**:  
+>   `https://app.nusakas.id/verify?otp=123456&phone=+6283188561866`  
+> - Sistem:  
+>   1. Generate OTP acak  
+>   2. Simpan sementara: `{ otp: "123456", phone: "+62831...", status: "pending" }`  
+>   3. Kirim link tersebut ke user via WhatsApp  
+> - Saat user klik link:  
+>   - Sistem cek OTP → validasi → tandai nomor sebagai terverifikasi  
+>   - User diarahkan ke form **pelengkapan data profil di web**  
+>   - Setelah submit → sinkronkan data ke backend → arahkan ke dashboard  
+>  
+> ---
+>  
+> ### 🔹 **Untuk user yang daftar via web (langkah awal di website)**:  
+> Di halaman pendaftaran web, tampilkan **dua pilihan**:  
+> - **Lanjutkan pendaftaran sepenuhnya di web**  
+> - **Selesaikan pendaftaran via WhatsApp**  
+>  
+> #### → Jika pilih **"via WhatsApp"**:  
+> - User masukkan nomor WA di web  
+> - Sistem:  
+>   1. Generate OTP  
+>   2. Simpan: `{ otp, phone, source: "web" }`  
+>   3. Tampilkan instruksi: *“Kirim kode OTP ini ke nomor bot: [KODE]”*  
+> - Bot WhatsApp terima pesan → ekstrak OTP & nomor pengirim  
+> - Cek: apakah OTP valid **dan sesuai dengan nomor yang dimasukkan di web?**  
+>   - Jika **ya** → bot mulai tanya data profil (nama, usaha, dll.)  
+>   - Jika **tidak** → tolak & minta ulang  
+> - Setelah data WhatsApp lengkap → sinkronkan dengan session web → arahkan ke dashboard  
+>  
+> #### → Jika pilih **"lanjut di web"**:  
+> - User isi semua data profil langsung di web  
+> - Di akhir form, minta **nomor WhatsApp untuk verifikasi**  
+> - Kirim OTP ke bot → user harus kirim kode ke nomor bot  
+> - Bot terima → validasi → konfirmasi ke backend → tandai user sebagai terverifikasi  
+> - Data web + nomor WA disinkronkan → selesai  
+>  
+> ---
+>  
+> **Prinsip utama**:  
+> - **Tidak ada user yang "terdaftar otomatis"** hanya karena kirim pesan  
+> - Semua user harus **verifikasi kepemilikan nomor** + **isi data wajib**  
+> - Opsi **hybrid** harus konsisten: data dari web dan WA harus sinkron  
+
+---
+
+### 💡 Catatan Teknis Penting:
+- Gunakan **session berbasis nomor WA** (bukan cookie) untuk konsistensi antar platform  
+- OTP harus ber-TTL (misal: 5 menit) dan **sekali pakai**  
+- Simpan status pendaftaran: `pending_web`, `pending_wa`, `verified`, `completed`  
+- Hindari duplikasi: jika user mulai di web lalu lanjut di WA, jangan buat akun baru — **lanjutkan session yang sama**
+
+---
+
+### 📌 Contoh Respons Awal Bot (Saat Pertama Chat):
+> 🎉 *Selamat datang di NusaKas!*  
+>  
+> Hai Juragan! Untuk mulai, pilih cara daftar:  
+> 1️⃣ **Lanjutkan di WhatsApp** → saya akan bantu isi data lewat sini  
+> 2️⃣ **Daftar di Website** → saya kirim link verifikasi ke sini  
